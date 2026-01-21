@@ -1,0 +1,115 @@
+:root{
+    --brand-blue:#1E3A8A;    
+    --brand-orange:#F97316;   
+    --bg:#F8FAFC;
+    --text:#0F172A;
+    --muted:#64748B;
+}
+
+body{
+    background: var(--bg);
+    color: var(--text);
+}
+
+.navbar-brand img{
+    height: 28px; 
+}
+
+.card{
+    border: 0;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+.badge-accent{
+    background: var(--brand-orange);
+}
+
+.btn-brand{
+    background-color: var(--brand-blue);
+    border-color: var(--brand-blue);
+    color: #fff;
+}
+.btn-brand:hover{
+    background-color: var(--brand-blue);
+    border-color: var(--brand-blue);
+    color:#fff;
+    filter: brightness(0.95);
+}
+
+.btn-accent{
+    background-color: var(--brand-orange);
+    border-color: var(--brand-orange);
+    color:#fff;
+}
+.btn-accent:hover{
+    background-color: var(--brand-orange);
+    border-color: var(--brand-orange);
+    color:#fff;
+    filter: brightness(0.95);
+}
+
+
+.btn-brand:disabled,
+.btn-accent:disabled{
+    opacity: 0.85;
+}
+
+
+.small-muted{
+    color: var(--muted);
+}
+
+.accent-bar{
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--brand-blue), var(--brand-orange));
+}
+
+.accent-dot{
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    display: inline-block;
+}
+
+.dot-blue{ background: var(--brand-blue); }
+.dot-orange{ background: var(--brand-orange); }
+
+
+.btn-glow{
+    position: relative;
+    overflow: visible;         
+    border-radius: 14px;       
+}
+
+/* Псевдо-элемент свечения */
+.btn-glow::before{
+    content:"";
+    position:absolute;
+    inset:-6px;                /* как top/left/bottom/right = -6px */
+    border-radius: 18px;
+    z-index:-1;
+    filter: blur(12px);
+    opacity: 0;
+    transition: opacity .25s ease, transform .25s ease;
+    transform: scale(0.98);
+}
+
+/* Включаем свечение при наведении и при фокусе клавиатурой */
+.btn-glow:hover::before,
+.btn-glow:focus-visible::before{
+    opacity: 1;
+    transform: scale(1.02);
+}
+
+/* Цвета свечения - комплементарные */
+.btn-student::before{
+    background: rgba(30, 58, 138, 0.45);   
+}
+
+.btn-teacher::before{
+    background: rgba(249, 115, 22, 0.45);  
+}
+
+

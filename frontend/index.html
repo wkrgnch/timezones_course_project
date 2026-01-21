@@ -3,10 +3,97 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Online Defense Priority</title>
+    <title>Defense Priority</title>
+
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/app.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Online Defense Priority</h1>
-    <p>проверка</p>
+
+<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+        <img src="/static/img/logo.svg" alt="Logo">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav ms-auto gap-lg-2">
+            <li class="nav-item"><a class="nav-link active" href="/">Главная</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Вход</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Регистрация</a></li>
+        </ul>
+        </div>
+    </div>
+    
+</nav>
+<div class="accent-bar mb-3"></div>
+<main class="container my-4">
+    <!-- Золотое сечение (примерно 8/4) контент слева, панель справа -->
+    <div class="row g-4">
+        <div class="col-lg-8">
+        <div class="card p-4">
+            <div class="d-flex align-items-start justify-content-between gap-3">
+            <div>
+                <h1 class="h4 mb-1">Очередь на онлайн-защиту без ночных сдач</h1>
+                <p class="small-muted mb-0">
+                Студент указывает регион (по желанию), приложение показывает его локальное время и повышает приоритет тем, у кого уже поздно.
+                </p>
+            </div>
+            </div>
+
+            <hr class="my-4">
+                
+
+            <!-- Гештальт -->
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card p-3">
+                    <div class="fw-semibold">Студент</div>
+                    <div class="small-muted">Ввести код защиты и выбрать регион (или пропустить).</div>
+                    <div class="mt-3">
+                        <button class="btn btn-brand btn-glow btn-student w-100" type="button">Записаться</button>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card p-3">
+                    <div class="fw-semibold">Преподаватель</div>
+                    <div class="small-muted">Создать защиту и увидеть приоритетную и общую очередь.</div>
+                    <div class="mt-3">
+                        <button class="btn btn-accent btn-glow btn-teacher w-100" type="button">Создать защиту</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <p class="small-muted mt-4 mb-0">
+            Авторизация, создание сессии, join по коду, расчёт приоритета, обновление очереди.
+            </p>
+        </div>
+        </div>
+
+        <div class="col-lg-4">
+        <div class="card p-4">
+            <h2 class="h6 mb-3">веб-приложение включает в себя</h2>
+
+            <ul class="small-muted mb-0">
+            <li>Интерактивность (поиск региона, обновление очереди)</li>
+            <li>Комплементарные цвета (синий и оранжевый)</li>
+            <li>Золотое сечение (8/4 блоки)</li>
+            <li>Гештальт (группировка, сходство, фигура-фон)</li>
+            </ul>
+        </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
