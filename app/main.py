@@ -1,31 +1,38 @@
 from pathlib import Path
 
+import psycopg
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.core.config import settings
+from app.services.bootstrap import ensure_tables, ensure_timezones_loaded
 from app.api.timezones import router as timezones_router
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 FRONTEND_DIR = BASE_DIR / "frontend"
-STATIC_DIR = FRONTEND_DIR / "static"
+CSV_PATH = BASE_DIR / "data" / "timezones.csv"
+SQL_PATH = BASE_DIR / "app" / "sql" / "create_tables.sql"
 
-app = FastAPI(title="Online Defense Priority", version="0.2.0")
+app = FastAPI(title="Timezones Course Project")
 
-# статика фронта
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
-
-# API (без БД)
+# API
 app.include_router(timezones_router, prefix="/api/v1")
 
-@app.get("/", include_in_schema=False)
-def index():
-    return FileResponse(FRONTEND_DIR / "index.html")
+# Фронт 
+if FRONTEND_DIR.exists():
+    app.mount("/ui", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
 
-@app.get("/student", include_in_schema=False)
-def student_page():
-    return FileResponse(FRONTEND_DIR / "student.html")
+app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR / "static")), name="static")
 
-@app.get("/teacher", include_in_schema=False)
-def teacher_page():
-    return FileResponse(FRONTEND_DIR / "teacher.html")
+
+@app.get("/")
+def root():
+    return RedirectResponse(url="/ui/")
+
+@app.on_event("startup")
+def startup():
+    with psycopg.connect(settings.database_url) as conn:
+        ensure_tables(conn, SQL_PATH)
+        ensure_timezones_loaded(conn, CSV_PATH)
