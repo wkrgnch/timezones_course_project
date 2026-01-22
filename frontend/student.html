@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Студент</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/app.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar bg-white border-bottom">
+    <div class="container">
+        <a class="navbar-brand" href="/frontend/index.html">Главная</a>
+        <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary btn-sm" href="/frontend/student.html">Студент</a>
+        <a class="btn btn-outline-secondary btn-sm" href="/frontend/teacher.html">Преподаватель</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container my-4">
+    <div class="row g-4">
+        <div class="col-lg-8">
+        <div class="card p-4">
+            <h1 class="h5 mb-3">Запись на защиту</h1>
+
+            <label class="form-label">Регион (по желанию)</label>
+            <input id="regionInput" class="form-control" placeholder="Начни вводить: Москва, Омская..." />
+
+            <div class="form-text mb-3">
+            Если регион не указан — студент попадает в общую очередь.
+            </div>
+
+            <div id="result" class="alert alert-light border d-none"></div>
+
+            <button class="btn btn-brand w-100" type="button">Записаться</button>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card p-4">
+            <h2 class="h6 mb-2">Как считается приоритет</h2>
+            <p class="small mb-0 text-muted">
+            Чем позже местное время студента относительно Москвы, тем выше приоритет.
+            </p>
+        </div>
+        </div>
+    </div>
+</main>
+
+<script src="/static/js/timezones.js"></script>
+<script>
+    const input = document.getElementById("regionInput");
+    const result = document.getElementById("result");
+
+    TZ.attachAutocomplete(input, async (region) => {
+    const data = await TZ.tzNow(region);
+
+    result.classList.remove("d-none");
+    result.innerHTML = `
+        <div><b>Регион:</b> ${data.region}</div>
+        <div><b>Время в Москве:</b> ${data.msk_time}</div>
+        <div><b>Местное время:</b> ${data.local_time}</div>
+        <div><b>Смещение от МСК:</b> ${data.msk_offset_hours >= 0 ? "+" : ""}${data.msk_offset_hours} ч</div>
+        `;
+    });
+</script>
+</body>
+</html>
