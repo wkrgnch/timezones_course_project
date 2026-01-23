@@ -80,3 +80,22 @@ def queue(group_id: int, user=Depends(get_current_user), conn=Depends(get_conn))
             raise HTTPException(status_code=404, detail="Group not found")
 
     return {"group_id": group_id, "queue": list_queue(conn, group_id)}
+
+@router.post("/{group_id}/finish")
+def finish(group_id: int, user=Depends(get_current_user), conn=Depends(get_conn)):
+    _require_teacher(user)
+
+    # группа должна принадлежать этому преподавателю
+    with conn.cursor() as cur:
+        cur.execute(
+            "select 1 from groups where id=%s and teacher_id=%s limit 1",
+            (group_id, user["id"]),
+        )
+        if cur.fetchone() is None:
+            raise HTTPException(status_code=404, detail="Group not found")
+
+        cur.execute("delete from participants where group_id=%s", (group_id,))
+        deleted = cur.rowcount
+
+    conn.commit()
+    return {"group_id": group_id, "deleted": deleted}
