@@ -1,10 +1,10 @@
 from pathlib import Path
-
+from app.api.auth import router as auth_router
 import psycopg
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
-
+from fastapi.openapi.utils import get_openapi
 from app.core.config import settings
 from app.services.bootstrap import ensure_tables, ensure_timezones_loaded
 from app.api.timezones import router as timezones_router
@@ -19,6 +19,7 @@ app = FastAPI(title="Timezones Course Project")
 
 # API
 app.include_router(timezones_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1")
 
 # Фронт 
 if FRONTEND_DIR.exists():

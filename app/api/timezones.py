@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional
+import re
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
@@ -21,9 +21,9 @@ def _msk_now() -> datetime:
 
 
 def _label(msk_offset_hours: int, utc_offset_hours: int) -> str:
-    sign = "+" if msk_offset_hours >= 0 else "-"
-    sign2 = "+" if utc_offset_hours >= 0 else "-"
-    return f"МСК{sign}{abs(msk_offset_hours)} (UTC{sign2}{abs(utc_offset_hours)})"
+    sign_msk = "+" if msk_offset_hours >= 0 else "-"
+    sign_utc = "+" if utc_offset_hours >= 0 else "-"
+    return f"МСК{sign_msk}{abs(msk_offset_hours)} (UTC{sign_utc}{abs(utc_offset_hours)})"
 
 
 @router.get("/search")
@@ -31,7 +31,7 @@ def search(
     q: str = Query(..., min_length=1),
     limit: int = Query(10, ge=1, le=50),
     conn=Depends(get_conn),
-) -> List[dict]:
+):
     qq = q.strip()
 
     with conn.cursor() as cur:
@@ -63,15 +63,11 @@ def resolve(
     region: str = Query(..., min_length=1),
     limit: int = Query(20, ge=1, le=50),
     conn=Depends(get_conn),
-) -> dict:
-    """
-    Возвращает все подходящие варианты часового пояса для введённого региона.
-    Нужно для случаев, когда у региона несколько часовых зон.
-    """
+):
     nr = norm_region(region)
 
     with conn.cursor() as cur:
-        # совпадение по нормализованному названию
+        # точное совпадение по нормализованному названию
         cur.execute(
             """
             select region, msk_offset_hours, utc_offset_hours, fias_code
@@ -101,7 +97,7 @@ def resolve(
     if not rows:
         raise HTTPException(status_code=404, detail="Region not found")
 
-    # если у региона несколько строк, но одинаковые смещения - покажем 1 вариант
+    # чтобы не показывать одинаковые варианты несколько раз
     seen = set()
     variants = []
     for r in rows:
@@ -109,13 +105,17 @@ def resolve(
         if key in seen:
             continue
         seen.add(key)
+
+        msk = int(r[1])
+        utc = int(r[2])
+
         variants.append(
             {
                 "region": r[0],
-                "msk_offset_hours": int(r[1]),
-                "utc_offset_hours": int(r[2]),
+                "msk_offset_hours": msk,
+                "utc_offset_hours": utc,
                 "fias_code": r[3],
-                "label": _label(int(r[1]), int(r[2])),
+                "label": _label(msk, utc),
             }
         )
 
@@ -128,15 +128,10 @@ def resolve(
 
 @router.get("/now")
 def now(
-    region: Optional[str] = Query(default=None, min_length=1),
-    fias_code: Optional[str] = Query(default=None, min_length=1),
+    region: str | None = Query(default=None, min_length=1),
+    fias_code: str | None = Query(default=None, min_length=1),
     conn=Depends(get_conn),
-) -> dict:
-    """
-    Возвращает время в регионе сейчас.
-    Если указан fias_code — берём по нему.
-    Если указан region — берём первый подходящий вариант.
-    """
+):
     row = None
 
     with conn.cursor() as cur:
