@@ -8,6 +8,11 @@ from fastapi.openapi.utils import get_openapi
 from app.core.config import settings
 from app.services.bootstrap import ensure_tables, ensure_timezones_loaded
 from app.api.timezones import router as timezones_router
+from app.api import groups
+
+
+
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +25,7 @@ app = FastAPI(title="Timezones Course Project")
 # API
 app.include_router(timezones_router, prefix="/api/v1")
 app.include_router(auth_router, prefix="/api/v1")
-
+app.include_router(groups.router, prefix="/api/v1")
 # Фронт 
 if FRONTEND_DIR.exists():
     app.mount("/ui", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
