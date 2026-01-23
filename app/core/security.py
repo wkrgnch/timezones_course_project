@@ -8,7 +8,7 @@ import jwt
 
 from app.core.config import settings
 
-_PBKDF2_ITERATIONS = 210_000  # нормальная современная величина
+_PBKDF2_ITERATIONS = 210_000  
 
 
 def hash_password(password: str) -> str:

@@ -87,7 +87,7 @@ body{
 .btn-glow::before{
     content:"";
     position:absolute;
-    inset:-6px;                /* как top/left/bottom/right = -6px */
+    inset:-6px;                
     border-radius: 18px;
     z-index:-1;
     filter: blur(12px);
@@ -96,7 +96,6 @@ body{
     transform: scale(0.98);
 }
 
-/* Включаем свечение при наведении и при фокусе клавиатурой */
 .btn-glow:hover::before,
 .btn-glow:focus-visible::before{
     opacity: 1;
@@ -104,12 +103,26 @@ body{
 }
 
 /* Цвета свечения - комплементарные */
-.btn-student::before{
+.btn-student::before, .btn-brand:before{
     background: rgba(30, 58, 138, 0.45);   
 }
 
-.btn-teacher::before{
+.btn-teacher::before, .btn-accent:before{
     background: rgba(249, 115, 22, 0.45);  
 }
 
 
+.btn-brand, .btn-accent{
+    border-width: 1px;
+}
+
+.btn-brand:focus-visible,
+.btn-accent:focus-visible{
+    outline: none;
+    box-shadow: none;
+}
+
+.btn-glow{
+    position: relative;
+    z-index: 1; 
+}

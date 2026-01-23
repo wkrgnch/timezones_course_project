@@ -4,34 +4,25 @@ import psycopg
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.openapi.utils import get_openapi
 from app.core.config import settings
 from app.services.bootstrap import ensure_tables, ensure_timezones_loaded
 from app.api.timezones import router as timezones_router
-from app.api import groups
+from app.api.groups import router as groups_router
 
-
-
-
+app = FastAPI(title="Timezones Defense")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 FRONTEND_DIR = BASE_DIR / "frontend"
-CSV_PATH = BASE_DIR / "data" / "timezones.csv"
-SQL_PATH = BASE_DIR / "app" / "sql" / "create_tables.sql"
 
-app = FastAPI(title="Timezones Course Project")
-
-# API
-app.include_router(timezones_router, prefix="/api/v1")
-app.include_router(auth_router, prefix="/api/v1")
-app.include_router(groups.router, prefix="/api/v1")
-# Фронт 
-if FRONTEND_DIR.exists():
-    app.mount("/ui", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
-
+app.mount("/ui", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="ui")
 app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR / "static")), name="static")
 
+app.include_router(auth_router, prefix="/api/v1")
+app.include_router(timezones_router, prefix="/api/v1")
+app.include_router(groups_router, prefix="/api/v1")
+
+CSV_PATH = BASE_DIR / "data" / "timezones.csv"
+SQL_PATH = BASE_DIR / "app" / "sql" / "create_tables.sql"
 
 @app.get("/")
 def root():

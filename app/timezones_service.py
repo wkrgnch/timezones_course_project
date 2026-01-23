@@ -20,11 +20,11 @@ def _norm(s: str) -> str:
 
 def _norm_region(s: str) -> str:
     s = (s or "").strip().lower().replace("ё", "е")
-    # убираем "г." / "город" как шум
+    # убираем г. / город
     s = re.sub(r"\bг\.\b|\bг\b|\bгород\b", " ", s)
     # убираем знаки пунктуации
     s = re.sub(r"[^a-zа-я0-9\s]+", " ", s)
-    # схлопываем пробелы
+    
     s = re.sub(r"\s+", " ", s).strip()
     return s
 
@@ -41,13 +41,13 @@ def _parse_int(value: str) -> int:
 
     low = v.lower().replace("ё", "е")
 
-    # случаи "МСК" / "MSK" / "MCK" / "UTC" без чисел -> 0
+    
     if (("мск" in low) or ("msk" in low) or ("mck" in low)) and not re.search(r"\d", low):
         return 0
     if ("utc" in low) and not re.search(r"\d", low):
         return 0
 
-    # Ищем первое целое число со знаком: +3, -2, 4
+    # Ищем первое целое число со знаком +3, -2, 4
     m = re.search(r"[-+]\s*\d+|\d+", low)
     if m:
         return int(m.group(0).replace(" ", ""))
@@ -107,7 +107,6 @@ def compute_times(row: TimezoneRow) -> dict:
 
     local_now = utc_now + timedelta(hours=row.utc_offset_hours)
 
-    # для UI
     return {
         "region": row.region,
         "msk_offset_hours": row.msk_offset_hours,
